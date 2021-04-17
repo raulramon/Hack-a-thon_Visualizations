@@ -1,0 +1,193 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+
+library(lubridate)
+library(ggplot2)
+library(gganimate)
+library(devtools)
+library(gifski)
+library(png)
+```
+
+```{r}
+library(readr)
+Crypto_Hackathon_stonks <- read_csv("Crypto_Hackathon_stonks.csv")
+```
+
+
+```{r}
+stonk <- Crypto_Hackathon_stonks
+stonk
+```
+
+
+```{r}
+stonk$date  <- mdy_hm(stonk$date)
+stonk
+```
+
+```{r}
+stonk$dateA <- date(stonk$date)
+stonk
+```
+
+```{r}
+
+```
+
+
+```{r}
+# stonk$hour <- hour(stonk$date)
+ stonk$day <- day(stonk$date)
+# stonk$minu <- format(stonk$date, format = "%M")
+#stonk$year <- year(stonk$date)
+#stonk <- stonk %>% mutate(day = factor(ifelse(format(date, format ="%Y")== 27, 27, 28)))
+stonk
+```
+stonk$sec <- second(stonk$sec)
+
+```{r}
+stonk$date <- format(stonk$date, format = "%Y-%m-%d")
+stonk
+```
+
+```{r}
+pen <- ggplot(stonk, aes(x = penalty, fill = day)) +
+  geom_histogram()+
+  labs(title = "Penalty for Crypto_Hackathon Stonks Team in the period",
+       subtitle = "Crypto_Hackathon_stonks",
+       x = "Penalty",
+       y = "Day",
+       caption = "Source: Dr. Mondesire") +
+  transition_states(
+  total,
+  transition_length = 4,
+  state_length = 4) +
+  enter_fade() +
+  exit_shrink() +
+  ease_aes('sine-in-out')
+
+save_animation(pen, "pen.gif")
+
+anim_save(pen, animation = last_animation(), path = "pen.gif")
+```
+
+```{r}
+cas <- ggplot(stonk, aes(minu, cash)) +
+  geom_point()+geom_line()+
+  labs(title = "Cash by Minutes for Crypto_Hackathon Stonks Team",
+       subtitle = "Crypto_Hackathon_stonks",
+       x = "Minutes ",
+       y = "Cash",
+       caption = "Source: Dr. Mondesire") +
+  theme_minimal() +
+  transition_reveal(total)
+  
+cas
+```
+
+
+
+```{r}
+s <- ggplot(stonk, aes(hour, penalty)) +
+  geom_point()+geom_line() +
+  labs(title = "Penaties by Hour for Crypto_Hackathon Stonks Team",
+       subtitle = "Crypto_Hackathon_Stonks",
+       x = "Hour",
+       y = "Penalty", caption = "Source: Dr. Mondesire") +
+  theme_minimal() +
+  transition_reveal(total, range = NULL, keep_last = TRUE)
+s
+```
+
+```{r}
+cs <- ggplot(data = stonk, aes(x= hour, y = cash)) +
+  geom_point(size = 3, color= "red") + geom_line(color = "blue") +
+  labs(title = "Cash by Hour for Crypto_Hackathon Stonks Team",
+       subtitle = "Crypto_Hackathon_Stonks",
+       x = "Cash",
+       y = "Penalty", caption = "Source: Dr. Mondesire") +
+  theme_bw() +
+  transition_events()
+ 
+cs
+```
+labs(title = "minu: {frame_time}",
+      x = "Hour", 
+      y = "Cash Available") +
+  transition_time(minu) +
+  ease_aes('linear')
+  
+
+```{r}
+sb <- ggplot(stonk, aes(shares_value))+
+  geom_bar()+
+  
+transition_states(
+  total, transition_length = 4,
+  state_length = 4) +
+  enter_fade() +
+  exit_shrink() +
+  ease_aes('sine-in-out')
+sb
+```
+
+```{r}
+plot1 <- ggplot(stonk, aes(x = date, y = total)) +
+  geom_line(size = 1, color = "red") +
+    labs( x = "Date", 
+       y = "Total",
+        title = "Total Cash per Date",
+        subtitle = "Amount of cash over the time",
+        caption = "Source: Crypto_Hackathon_stonks.csv")
+plot1
+```
+
+```{r}
+ggplot(stonk, aes(x = date, y = total)) +
+  geom_line(size = 1, color = "red") +
+  theme_bw() +
+    theme(axis.text.x = element_text(face = "bold", size = 14)) +
+    theme(axis.text.y = element_text(face = "bold", size = 10)) +
+    transition_reveal(date) +
+   labs( x = "Date", 
+       y = "Total",
+        title = "Total Cash per Date",
+        subtitle = "Amount of cash over the time",
+        caption = "Source: Crypto_Hackathon_stonks.csv")
+```
+
+
+```{r}
+stonks_longer <- Crypto_Hackathon_stonks %>% select(total, penalty,
+                                                     cash, day)
+
+
+
+
+{r}
+stonks_longer <- pivot_longer(stonks_longer, cols = total:cash,
+                              names_to = "Type",
+                              values_to = "Dollar_Amount")
+
+
+{r}
+stonks_longer
+
+
+
+{r}
+ggplot(stonks_longer, mapping = aes(x = Dollar_Amount, y  = factor(Type))) +
+  geom_col(mapping = aes(fill = Type), position = "dodge") + 
+  transition_time(day) +
+  ease_aes("linear") + 
+  labs(title = "Amount of Big Data Dollars over the Time",
+       subtitle = "Filtered by Type",
+       caption = "Source: Crypto CUrrency Copetition",
+       y = "type")
+```
